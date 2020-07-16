@@ -86,7 +86,7 @@ public class EzBuildTarget : MonoBehaviour
         // does the target need a subfolder made for it? or will unity handle it?
         if (OSXBuild())
         {
-            gamePath = $"{buildLocation}/{gameName}";
+            gamePath = $"{buildLocation}/{gameName}.app";
             gameFolderPath = $"{gamePath}";
         }
         else
@@ -101,19 +101,7 @@ public class EzBuildTarget : MonoBehaviour
 
         if (currentSettings.zip)
         {
-            string actualFolderPath = gameFolderPath;
-
-            if (OSXBuild())
-            {
-                // for reasons truly beyond me, sometimes osx builds only get the trailing zero of their
-                // version number cut off, ie, 'clade-osx-0.2.0' becomes 'clade-osx-0.2'
-                // so we have to do a search here to get the real location in order to zip
-                actualFolderPath = (from directoryPath in Directory.GetDirectories(ezb.buildLocation).ToList()
-                                   where directoryPath.Contains(prefix)
-                                   select directoryPath).FirstOrDefault();
-            }
-
-            System.IO.Compression.ZipFile.CreateFromDirectory(actualFolderPath, $"{gameFolderPath}.zip", System.IO.Compression.CompressionLevel.Fastest, OSXBuild());
+            System.IO.Compression.ZipFile.CreateFromDirectory(gameFolderPath, $"{gameFolderPath}.zip", System.IO.Compression.CompressionLevel.Fastest, OSXBuild());
         }
     }
 
