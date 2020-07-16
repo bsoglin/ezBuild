@@ -1,0 +1,17 @@
+{
+    "name": "EzBuildEditor",
+    "references": [
+        "GUID:f076bcdcbefca4269b7f0753c2534395"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
