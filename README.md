@@ -10,9 +10,7 @@ PC64
 Linux64
 ```
 
-the 
-
-these are extremely easy to add, so i'll probably add more as i go along.
+these are extremely easy to add to, so i'll probably add more as i go along.
 
 # installation
 download. open in unity. go to Assets / export package. export it into your project. now you're cookin w packages!!
