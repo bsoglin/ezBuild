@@ -1,5 +1,5 @@
 # ezBuild
-Build manager package for Unity. pretty much just for my personal use, but if it's handy to anyone that'd be nice
+Build manager package for Unity. pretty much just for my personal use, but if it's handy to anyone else that would be nice!
 
 currently supported build targets:
 
