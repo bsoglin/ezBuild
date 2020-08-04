@@ -24,19 +24,19 @@ public class EzBuildTarget : MonoBehaviour
 
         string buildLocation = ezb.buildLocation;
         string prefix = GetBuildPrefix(buildTarget);
-        string gameName = $"{ezb.gameName}-{prefix}-{Application.version}";
+        string gameNameWithDetails = $"{ezb.gameName}-{prefix}-{Application.version}";
 
         // move old versions of the game into the /old/ directory
         // first check: is there already an object with that name in this location?
         // if so, move them all to old
-        foreach (string directoryPath in Directory.GetDirectories(buildLocation).ToList())
+        foreach (string directoryPath in Directory.GetDirectories(buildLocation))
         {
-            string directoryName = GetSubfolderName(directoryPath);
+            string directoryName = Path.GetDirectoryName(directoryPath);
 
-            // does the cur folder already contain a build w this name? if so move it?
+            // does the cur folder already contain a build w this name? if so move it
             if (directoryPath.Contains(prefix))
             {
-                string moveLocation = $"{buildLocation}/old/{directoryName}/";
+                string moveLocation = Path.Combine(buildLocation, "old", $"{directoryName}");
                 int number = 0;
                 // also the old dir might contain this build too
                 while (Directory.Exists(moveLocation))
@@ -46,27 +46,31 @@ public class EzBuildTarget : MonoBehaviour
                     // if you're building for osx, preserve the .app
                     if (OSXBuild())
                     {
-                        moveLocation = $"{buildLocation}/old/{directoryName.Replace(".app", "")}-{number}.app/";
+                        moveLocation = Path.Combine(buildLocation, "old", $"{directoryName.Replace(".app", "")}-{number}.app");
                     }
                     else
                     {
-                        moveLocation = $"{buildLocation}/old/{directoryName}-{number}/";
+                        moveLocation = Path.Combine(buildLocation, "old", $"{directoryName}-{number}");
                     }
                 }
+
                 Directory.Move(directoryPath, moveLocation);
             }
         }
 
-        // similar to the above, are their zip files with the given names in here? most likely they are zipped
+        // similar to the above, are there zip files with the given names in here? move them too
         foreach (string zipFilePath in Directory.GetFiles(buildLocation).ToList())
         {
 
-            string fileName = zipFilePath.Split('/').Last().Replace(".zip", "");
+            string fileName = Path.GetFileName(zipFilePath);
+
+            Debug.Log(fileName);
 
             // does the cur folder already contain a build w this name? if so move it?
             if (fileName.Contains(prefix))
             {
-                string moveLocation = $"{buildLocation}/old/{fileName}.zip";
+                string moveLocation = Path.Combine(buildLocation, "old", $"{fileName}.zip");
+
                 int number = 0;
 
                 // also the old dir might contain this build too
@@ -74,8 +78,10 @@ public class EzBuildTarget : MonoBehaviour
                 {
                     number++;
 
-                    moveLocation = $"{buildLocation}/old/{fileName}-{number}.zip";
+                    moveLocation = Path.Combine(buildLocation, "old", $"{fileName}-{number}.zip");
                 }
+
+                Debug.Log(zipFilePath + " " + moveLocation);
 
                 File.Move(zipFilePath, moveLocation);
             }
@@ -86,15 +92,28 @@ public class EzBuildTarget : MonoBehaviour
         // does the target need a subfolder made for it? or will unity handle it?
         if (OSXBuild())
         {
-            gamePath = $"{buildLocation}/{gameName}.app";
+            gamePath = Path.Combine(buildLocation, $"{gameNameWithDetails}.app");
             gameFolderPath = $"{gamePath}";
         }
         else
         {
-            gameFolderPath = $"{buildLocation}/{gameName}";
+            gameFolderPath = Path.Combine(buildLocation, gameNameWithDetails);
+
             Directory.CreateDirectory(gameFolderPath);
-            gamePath = $"{gameFolderPath}/{gameName}";
-		}
+
+            if (WindowsBuild())
+            {
+                gamePath = Path.Combine(gameFolderPath, $"{ezb.gameName}.exe");
+            }
+            else if (WebGLBuild())
+            {
+                gamePath = gameFolderPath;
+            }
+            else 
+            {
+                gamePath = Path.Combine(gameFolderPath, ezb.gameName);
+            }
+        }
 
         //once that's done, build into the location
         DoBuild(gamePath);
@@ -103,6 +122,8 @@ public class EzBuildTarget : MonoBehaviour
         {
             System.IO.Compression.ZipFile.CreateFromDirectory(gameFolderPath, $"{gameFolderPath}.zip", System.IO.Compression.CompressionLevel.Fastest, OSXBuild());
         }
+
+        Debug.Log($"Succesfully built for {prefix}");
     }
 
     public void DoBuild(string path)
@@ -134,13 +155,22 @@ public class EzBuildTarget : MonoBehaviour
 
     string GetSubfolderName(string subfolderLocation)
     {
-        string[] split = subfolderLocation.Split('/');
+        string[] split = subfolderLocation.Split(Path.PathSeparator);
         return split[split.Length - 1];
     }
 
     public bool OSXBuild()
     {
         return buildTarget == BuildTarget.StandaloneOSX;
+    }
+       
+    public bool WindowsBuild()
+    {
+        return buildTarget == BuildTarget.StandaloneWindows64;
+    }
+    public bool WebGLBuild()
+    {
+        return buildTarget == BuildTarget.WebGL;
     }
 
     public string GetBuildPrefix(BuildTarget buildTarget)
@@ -157,8 +187,7 @@ public class EzBuildTarget : MonoBehaviour
                 return "linux";
             default:
 				Debug.LogError("Unrecognized build target");
-                return "huh";
-                break;
+                return "unrecognized";
         }
     }
 
@@ -175,7 +204,6 @@ public class EzBuildTarget : MonoBehaviour
             default:
 				Debug.LogError("Unrecognized build target");
 				return BuildTargetGroup.Unknown;
-                break;
         }
     }
 }

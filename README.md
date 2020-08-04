@@ -23,5 +23,3 @@ download. open in unity. go to Assets / export package. export it into your proj
 that's it! you can toggle individual build settings on the targets & build them individually in the inspector, or (main advantage of this package) you can build all of your targets at once with "build all" on the parent object.
 
 it'll also automatically zip your builds if you check "zip"
-
-

@@ -19,11 +19,13 @@ public class EzBuild : MonoBehaviour
     public void PrepBuild()
     {
         // do the given folder(s) exist? if not, create em
-        foreach (string dir in new List<string>() { "/old/" })
+        foreach (string dir in new List<string>() { "old" })
         {
-            if (!Directory.Exists(buildLocation + dir))
+            string path = Path.Combine(buildLocation, dir);
+
+            if (!Directory.Exists(path))
             {
-                Directory.CreateDirectory(buildLocation + dir);
+                Directory.CreateDirectory(path);
             }
         }
     }
