@@ -512,7 +512,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7c6fd55806f2b4668b5bf4164cf3648b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  buildLocation: C:/Users/bsogl/Documents/dev/ezBuild/buildLocation
+  buildLocation: C:/Users/bsogl/Documents/dev/ezBuild/ezBuild-buildhere
   gameName: SampleName
   overrideChildSettings: 1
   settings:
