@@ -31,7 +31,7 @@ public class EzBuildTarget : MonoBehaviour
         // if so, move them all to old
         foreach (string directoryPath in Directory.GetDirectories(buildLocation))
         {
-            string directoryName = Path.GetDirectoryName(directoryPath);
+            string directoryName = Path.GetFileName(directoryPath);
 
             // does the cur folder already contain a build w this name? if so move it
             if (directoryPath.Contains(prefix))
