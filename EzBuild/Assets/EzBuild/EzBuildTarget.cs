@@ -43,15 +43,7 @@ public class EzBuildTarget : MonoBehaviour
                 {
                     number++;
 
-                    // if you're building for osx, preserve the .app
-                    if (OSXBuild())
-                    {
-                        moveLocation = Path.Combine(buildLocation, "old", $"{directoryName.Replace(".app", "")}-{number}.app");
-                    }
-                    else
-                    {
-                        moveLocation = Path.Combine(buildLocation, "old", $"{directoryName}-{number}");
-                    }
+                    moveLocation = Path.Combine(buildLocation, "old", $"{directoryName}-{number}");
                 }
 
                 Directory.Move(directoryPath, moveLocation);
@@ -92,8 +84,11 @@ public class EzBuildTarget : MonoBehaviour
         // does the target need a subfolder made for it? or will unity handle it?
         if (OSXBuild())
         {
-            gamePath = Path.Combine(buildLocation, $"{gameNameWithDetails}.app");
+            gamePath = Path.Combine(buildLocation, $"{gameNameWithDetails}/{ezb.gameName}.app");
+
             gameFolderPath = $"{gamePath}";
+
+            Directory.CreateDirectory(gameFolderPath);
         }
         else
         {
